@@ -110,30 +110,13 @@ Jinja2==3.1.4
 #### **6. Configurar o Banco de Dados**
 Seu projeto usa Flask-SQLAlchemy e Flask-Migrate para gerenciar o banco de dados. A pasta `migrations/` contém as migrações, mas o arquivo do banco de dados (`app.db`) pode não funcionar corretamente na nova máquina, então vamos recriá-lo.
 
-- **Remover o Banco de Dados Antigo (se existir)**:
-  Delete o arquivo `app.db` (se ele foi transferido):
   ```
   del app.db
-  ```
-
-- **Inicializar o Banco de Dados**:
-  Com o ambiente virtual ativado, inicialize o banco de dados e aplique as migrações:
-  ```
+  del  migrations
   set FLASK_APP=pharmacy_stock.py
+  flask db init
+  flask db migrate -m "migration default"
   flask db upgrade
-  ```
-  Isso criará um novo arquivo `app.db` e aplicará todas as migrações contidas na pasta `migrations/`.
-
-- **Popule os Papéis (Roles)**:
-  Como o banco de dados é novo, você precisa inserir os papéis (`Administrator` e `Employee`) novamente:
-  ```
-  flask shell
-  ```
-  No shell do Flask, execute:
-  ```python
-  from app.models import Role
-  Role.insert_roles()
-  exit()
   ```
 
 #### **7. Rodar o Projeto**
@@ -147,40 +130,6 @@ Agora que o ambiente está configurado, você pode rodar o projeto na nova máqu
 
 - **Acessar a Aplicação**:
   Abra um navegador e acesse `http://127.0.0.1:5000/`. Você deve ver a página inicial da sua aplicação.
-
-#### **8. Testar o Fluxo**
-Teste o fluxo principal para garantir que tudo está funcionando:
-1. Registre um administrador (`Administrator`) e crie uma farmácia.
-2. Registre um empregado (`Employee`), faça login, e selecione a farmácia na rota `/select_farmacia`.
-3. Verifique se a página `/index` exibe os dados corretamente.
-
-#### **9. Solucionar Problemas (se necessário)**
-Se você encontrar erros ao rodar o projeto, aqui estão algumas verificações comuns:
-
-- **Erro `TemplateNotFound`**:
-  - Confirme que todos os templates estão em `app/templates/`.
-  - Verifique se `pharmacy_stock.py` está configurado corretamente (veja o exemplo na resposta anterior).
-
-- **Erro de Dependências**:
-  - Se alguma biblioteca estiver faltando, você pode instalá-la manualmente com `pip install nome-da-biblioteca`.
-  - Atualize o `requirements.txt` para incluir a biblioteca ausente.
-
-- **Erro de Banco de Dados**:
-  - Se `flask db upgrade` falhar, pode ser necessário recriar as migrações:
-    ```
-    del app.db
-    rmdir /s /q migrations
-    flask db init
-    flask db migrate -m "initial migration"
-    flask db upgrade
-    ```
-  - Depois, repita o passo de popular os papéis (`Role.insert_roles()`).
-
-- **Erro de Variáveis de Ambiente**:
-  - Certifique-se de que `FLASK_APP` está definido corretamente:
-    ```
-    set FLASK_APP=pharmacy_stock.py
-    ```
 
 ### **Resumo**
 1. Transfira a pasta compactada para a nova máquina e descompacte-a.
