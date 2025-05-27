@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Vendas - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'info' if category == 'info' else 'success' if category == 'success' else 'danger' }}" role="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <h2 class="mb-4">Registrar Venda</h2>
+    <!-- Formulário de Filtro -->
+    <form method="GET" class="mb-4">
+        {{ filtro_form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                {{ filtro_form.nome.label(class="form-label") }}
+                {{ filtro_form.nome(class="form-control") }}
+            </div>
+            <div class="col-md-4 mb-3">
+                {{ filtro_form.codigo_barras.label(class="form-label") }}
+                {{ filtro_form.codigo_barras(class="form-control") }}
+            </div>
+            <div class="col-md-2 d-flex align-items-end mb-3">
+                {{ filtro_form.submit(class="btn btn-primary w-100") }}
+            </div>
+        </div>
+    </form>
+    <!-- Tabela de Produtos -->
+    {% if estoques %}
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Gênero</th>
+                        <th>Tipo</th>
+                        <th>Grupo</th>
+                        <th>ID do Fabricante</th>
+                        <th>Quantidade por Embalagem</th>
+                        <th>Quantidade no Estoque</th>
+                        <th>Preço de Venda</th>
+                        <th>Código de Barras</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for estoque in estoques %}
+                        <tr>
+                            <td>{{ estoque.produto.nome }}</td>
+                            <td>{{ estoque.produto.genero }}</td>
+                            <td>{{ estoque.produto.tipo }}</td>
+                            <td>{{ estoque.produto.grupo }}</td>
+                            <td>{{ estoque.produto.fabricante_id }}</td>
+                            <td>{{ estoque.produto.quantidade_embalagem }}</td>
+                            <td>{{ estoque.produto.quantidade }}</td>
+                            <td>R${{ "%.2f"|format(estoque.produto.preco_venda) }}</td>
+                            <td>{{ estoque.produto.codigo_barras }}</td>
+                            <td>
+                                <div class="d-inline-flex flex-column align-items-center">
+                                    <form method="POST" class="d-inline add-to-cart-form mb-2" data-produto-id="{{ estoque.produto.id }}">
+                                        {{ venda_form.csrf_token() }}
+                                        <input type="hidden" name="produto_id" value="{{ estoque.produto.id }}">
+                                        <div class="d-inline-flex align-items-center">
+                                            <input type="number" name="quantidade_carrinho" class="form-control d-inline-block" style="width: 60px;" value="{{ carrinho.get(estoque.produto.id|string, 0) }}" min="0" max="999" required>
+                                            <button type="submit" class="btn btn-primary btn-sm ms-2">Registrar</button>
+                                        </div>
+                                    </form>
+                                    <form method="POST" class="d-inline remove-from-cart-form" data-produto-id="{{ estoque.produto.id }}">
+                                        {{ venda_form.csrf_token() }}
+                                        <input type="hidden" name="produto_id" value="{{ estoque.produto.id }}">
+                                        <input type="hidden" name="remove_from_cart_action" value="1">
+                                        <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Botão Registrar Compra -->
+        <form method="POST" id="finalizar-compra-form">
+            {{ venda_form.hidden_tag() }}
+            <input type="hidden" name="finalizar_compra_action" value="1">
+            <button type="submit" class="btn btn-success mt-3">Registrar Compra</button>
+        </form>
+    {% endif %}
+
+    <!-- JavaScript para validação no lado do cliente -->
+    <script>
+        document.querySelectorAll('.add-to-cart-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                const quantidade = form.querySelector('input[name="quantidade_carrinho"]').value;
+                const produtoId = form.querySelector('input[name="produto_id"]').value;
+                
+                if (!produtoId) {
+                    event.preventDefault();
+                    alert('Erro: Produto não informado.');
+                    return;
+                }
+                if (!quantidade || parseInt(quantidade) < 0 || parseInt(quantidade) > 999) {
+                    event.preventDefault();
+                    alert('Erro: Quantidade inválida. Deve ser entre 0 e 999.');
+                    return;
+                }
+            });
+        });
+
+        document.querySelectorAll('.remove-from-cart-form').forEach(form => {
+            form.addEventListener('submit', function(event) {
+                const produtoId = form.querySelector('input[name="produto_id"]').value;
+                if (!produtoId) {
+                    event.preventDefault();
+                    alert('Erro: Produto não informado.');
+                    return;
+                }
+            });
+        });
+    </script>
+{% endblock %}

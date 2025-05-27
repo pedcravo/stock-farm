@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Detalhes do Produto - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ produto.nome }}</h5>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item"><strong>Gênero:</strong> {{ produto.genero }}</li>
+                <li class="list-group-item"><strong>Tipo:</strong> {{ produto.tipo }}</li>
+                <li class="list-group-item"><strong>Numeração do Original:</strong> {{ produto.numeracao_original if produto.numeracao_original else 'Não aplicável' }}</li>
+                <li class="list-group-item"><strong>Grupo:</strong> {{ produto.grupo }}</li>
+                <li class="list-group-item"><strong>ID do Fabricante:</strong> {{ produto.fabricante_id }}</li>
+                <li class="list-group-item"><strong>Quantidade por Embalagem:</strong> {{ produto.quantidade_embalagem }}</li>
+                <li class="list-group-item"><strong>Quantidade no Estoque:</strong> {{ produto.quantidade }}</li>
+                <li class="list-group-item"><strong>ID do Fornecedor:</strong> {{ produto.fornecedor_id }}</li>
+                <li class="list-group-item"><strong>Preço de Compra:</strong> R${{ "%.2f"|format(produto.preco_compra) }}</li>
+                <li class="list-group-item"><strong>Preço de Venda:</strong> R${{ "%.2f"|format(produto.preco_venda) }}</li>
+                <li class="list-group-item"><strong>Código de Barras:</strong> {{ produto.codigo_barras }}</li>
+            </ul>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('stock') }}" class="btn btn-secondary me-2">Voltar</a>
+        <a href="{{ url_for('edit_produto', id=produto.id) }}" class="btn btn-warning">Editar</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Erro - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="alert alert-danger" role="alert">
+        <p>Um erro inesperado ocorreu.</p>
+        <p>O administrador foi notificado. Desculpe pelo inconveniente!</p>
+        <p><a href="{{ url_for('index') }}" class="btn btn-secondary">Voltar</a></p>
+    </div>
+{% endblock %}

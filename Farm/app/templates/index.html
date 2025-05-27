@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Início - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <p>Bem-vindo(a) à farmácia {{ farmacia_nome }}!</p>
+    <h2 class="mb-4">Produtos Cadastrados</h2>
+    {% if produtos %}
+        <ul class="list-group">
+            {% for produto in produtos %}
+                <li class="list-group-item">{{ produto.nome }} ({{ produto.genero }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            <p>Nenhum produto cadastrado.</p>
+        </div>
+    {% endif %}
+    {% if can_manage %}
+        <div class="mt-4">
+            <a href="{{ url_for('add_produto') }}" class="btn btn-primary me-2">Adicionar Item</a>
+            <a href="{{ url_for('stock') }}" class="btn btn-secondary">Ver Estoque</a>
+        </div>
+    {% endif %}
+{% endblock %}

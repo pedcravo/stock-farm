@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Relatório - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'info' if category == 'info' else 'success' if category == 'success' else 'danger' }}" role="alert">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Data</th>
+                    <th>Produto</th>
+                    <th>Quantidade Retirada</th>
+                    <th>Quantidade Adicionada</th>
+                    <th>Código de Barras</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.data }}</td>
+                        <td>{{ log.produto }}</td>
+                        <td>{{ log.quantidade_retirada if log.quantidade_retirada else '-' }}</td>
+                        <td>{{ log.quantidade_adicionada if log.quantidade_adicionada else '-' }}</td>
+                        <td>{{ log.codigo_barras }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="d-flex justify-content-center mt-3">
+        {% if has_prev %}
+            <a href="{{ url_for('relatorio', page=page-1) }}" class="btn btn-secondary me-2">&larr; Anterior</a>
+        {% endif %}
+        {% if has_next %}
+            <a href="{{ url_for('relatorio', page=page+1) }}" class="btn btn-secondary">Próximo &rarr;</a>
+        {% endif %}
+    </div>
+{% endblock %}
