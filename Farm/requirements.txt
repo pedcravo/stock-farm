@@ -9,4 +9,4 @@ sqlalchemy-utils
 python-dateutil
 statistics
 gunicorn==23.0.0
-Flask-WTF==2.0.1
+Flask-WTF==1.2.2
