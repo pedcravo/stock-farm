@@ -86,7 +86,6 @@ class Produto(db.Model):
     grupo: so.Mapped[str] = so.mapped_column(sa.String(50), nullable=False)
     fabricante_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('fabricante.id'), nullable=False)
     quantidade_embalagem: so.Mapped[int] = so.mapped_column(nullable=False)
-    quantidade: so.Mapped[int] = so.mapped_column(nullable=False)
     fornecedor_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('fornecedor.id'), nullable=False)
     preco_compra: so.Mapped[float] = so.mapped_column(nullable=False)
     preco_venda: so.Mapped[float] = so.mapped_column(nullable=False)
@@ -103,6 +102,18 @@ class Produto(db.Model):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
+    validades: so.WriteOnlyMapped['Validade'] = so.relationship(
+        back_populates='produto',
+        cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+    @property
+    def quantidade(self):
+        validades = db.session().scalars(
+            sa.select(Validade).where(Validade.produto_id == self.id)
+        ).all()
+        return sum(validade.quantidade for validade in validades) if validades else 0
 
 class Estoque(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -117,7 +128,15 @@ class ProdutoLog(db.Model):
     produto_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('produto.id'), nullable=False)
     quantidade: so.Mapped[int] = so.mapped_column(nullable=False)
     timestamp: so.Mapped[datetime] = so.mapped_column(default=lambda: datetime.now(timezone.utc))
+    operacao: so.Mapped[str] = so.mapped_column(sa.String(20), nullable=False)  # Novo campo para operação
     produto: so.Mapped['Produto'] = so.relationship(back_populates='logs')
+
+class Validade(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    produto_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('produto.id'), nullable=False)
+    data_validade: so.Mapped[datetime] = so.mapped_column(nullable=False)
+    quantidade: so.Mapped[int] = so.mapped_column(nullable=False)
+    produto: so.Mapped['Produto'] = so.relationship(back_populates='validades')
 
 @login.user_loader
 def load_user(id):

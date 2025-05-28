@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="text-center mb-4">{% if form.original_nome %}Editar{% else %}Adicionar{% endif %} Produto - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    <h1 class="text-center mb-4">{% if form.original_nome %}Editar Produto{% else %}Adicionar Produto{% endif %} - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="alert alert-info" role="alert">
@@ -11,94 +11,72 @@
             </div>
         {% endif %}
     {% endwith %}
-    <form action="" method="post" novalidate class="row g-3">
-        {{ form.hidden_tag() }}
-        <div class="col-md-4">
-            <label class="form-label">{{ form.nome.label }}</label>
-            {{ form.nome(class="form-control") }}
-            {% for error in form.nome.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{% if form.original_nome %}Editar Produto: {{ form.original_nome }}{% else %}Adicionar Novo Produto{% endif %}</h5>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ form.nome.label }}</label>
+                        {{ form.nome(class="form-control") }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ form.genero.label }}</label>
+                        {{ form.genero(class="form-control") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.tipo.label }}</label>
+                        {{ form.tipo(class="form-select") }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.numeracao_original.label }}</label>
+                        {{ form.numeracao_original(class="form-control") }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.grupo.label }}</label>
+                        {{ form.grupo(class="form-control") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.fabricante_id.label }}</label>
+                        {{ form.fabricante_id(class="form-control") }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.quantidade_embalagem.label }}</label>
+                        {{ form.quantidade_embalagem(class="form-control") }}
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">{{ form.fornecedor_id.label }}</label>
+                        {{ form.fornecedor_id(class="form-control") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ form.preco_compra.label }}</label>
+                        {{ form.preco_compra(class="form-control") }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">{{ form.preco_venda.label }}</label>
+                        {{ form.preco_venda(class="form-control") }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">{{ form.codigo_barras.label }}</label>
+                        {{ form.codigo_barras(class="form-control") }}
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
         </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.genero.label }}</label>
-            {{ form.genero(class="form-control") }}
-            {% for error in form.genero.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.tipo.label }}</label>
-            {{ form.tipo(class="form-select") }}
-            {% for error in form.tipo.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.numeracao_original.label }}</label>
-            {{ form.numeracao_original(class="form-control") }}
-            {% for error in form.numeracao_original.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.grupo.label }}</label>
-            {{ form.grupo(class="form-control") }}
-            {% for error in form.grupo.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.fabricante_id.label }}</label>
-            {{ form.fabricante_id(class="form-control") }}
-            {% for error in form.fabricante_id.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.quantidade_embalagem.label }}</label>
-            {{ form.quantidade_embalagem(class="form-control") }}
-            {% for error in form.quantidade_embalagem.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.quantidade.label }}</label>
-            {{ form.quantidade(class="form-control") }}
-            {% for error in form.quantidade.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.fornecedor_id.label }}</label>
-            {{ form.fornecedor_id(class="form-control") }}
-            {% for error in form.fornecedor_id.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.preco_compra.label }}</label>
-            {{ form.preco_compra(class="form-control") }}
-            {% for error in form.preco_compra.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.preco_venda.label }}</label>
-            {{ form.preco_venda(class="form-control") }}
-            {% for error in form.preco_venda.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">{{ form.codigo_barras.label }}</label>
-            {{ form.codigo_barras(class="form-control") }}
-            {% for error in form.codigo_barras.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </div>
-        <div class="col-12">
-            {{ form.submit(class="btn btn-primary") }}
-        </div>
-    </form>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('stock') }}" class="btn btn-secondary">Voltar</a>
+    </div>
 {% endblock %}

@@ -1,11 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, FloatField, IntegerField, SelectField, HiddenField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FloatField, IntegerField, SelectField, HiddenField, DateField
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError, Length, NumberRange
 from app.models import User, Produto, Farmacia, Fornecedor, Fabricante
 from app import db
 import sqlalchemy as sa
 from flask import request
 import re
+from datetime import datetime, timedelta
 
 class LoginForm(FlaskForm):
     username = StringField('Usuário', validators=[DataRequired()])
@@ -60,7 +61,6 @@ class ProdutoForm(FlaskForm):
     grupo = StringField('Grupo', validators=[DataRequired(), Length(min=1, max=50)])
     fabricante_id = IntegerField('ID do Fabricante', validators=[DataRequired()])
     quantidade_embalagem = IntegerField('Quantidade por Embalagem', validators=[DataRequired()])
-    quantidade = IntegerField('Quantidade no Estoque', validators=[DataRequired()])
     fornecedor_id = IntegerField('ID do Fornecedor', validators=[DataRequired()])
     preco_compra = FloatField('Preço de Compra', validators=[DataRequired()])
     preco_venda = FloatField('Preço de Venda', validators=[DataRequired()])
@@ -89,3 +89,13 @@ class VendaForm(FlaskForm):
     quantidade_carrinho = IntegerField('Quantidade no Carrinho', validators=[DataRequired(), NumberRange(min=0, max=999)])
     submit = SubmitField('Adicionar ao Carrinho')
     finalizar_compra = SubmitField('Finalizar Compra')
+
+class AddQuantidadeForm(FlaskForm):
+    quantidade = IntegerField('Quantidade a Adicionar', validators=[DataRequired(), NumberRange(min=1)])
+    data_validade = DateField('Data de Validade', format='%Y-%m-%d', validators=[DataRequired()])
+    submit = SubmitField('Adicionar Quantidade')
+
+    def validate_data_validade(self, field):
+        min_date = datetime.now().date() + timedelta(weeks=2)
+        if field.data < min_date:
+            raise ValidationError('Não foi possível adicionar a quantidade pois a data de validade é muito baixa (mínimo 2 semanas a partir de hoje). Verifique novamente ou entre em contato com o fornecedor.')

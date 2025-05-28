@@ -25,8 +25,9 @@ def make_shell_context():
         'Farmaceutico': models.Farmaceutico,
         'Fornecedor': models.Fornecedor,
         'Vendedor': models.Vendedor,
-        'Medicamento': models.Medicamento,
+        'Fabricante': models.Fabricante,
+        'Produto': models.Produto,
         'Estoque': models.Estoque,
-        'Pedido': models.Pedido,
-        'ItensPedido': models.ItensPedido
+        'ProdutoLog': models.ProdutoLog,
+        'Validade': models.Validade
     }

@@ -51,9 +51,10 @@
                         <th>Gênero</th>
                         <th>Tipo</th>
                         <th>Grupo</th>
-                        <th>ID do Fabricante</th>
-                        <th>Quantidade por Embalagem</th>
-                        <th>Quantidade no Estoque</th>
+                        <th>ID Fab.</th>
+                        <th>Quant. por Caixa</th>
+                        <th>Quant. no estoque</th>
+                        <th>Val. proxima</th>
                         <th>Preço de Venda</th>
                         <th>Código de Barras</th>
                         <th>Ações</th>
@@ -68,13 +69,13 @@
                             <td>{{ estoque.produto.grupo }}</td>
                             <td>{{ estoque.produto.fabricante_id }}</td>
                             <td>{{ estoque.produto.quantidade_embalagem }}</td>
-                            <td>{{ estoque.produto.quantidade }}</td>
+                            <td>{{ estoque.produto.quantidade_total }}</td>
+                            <td>{{ estoque.produto.validade_proxima }}</td>
                             <td>R${{ "%.2f"|format(estoque.produto.preco_venda) }}</td>
                             <td>{{ estoque.produto.codigo_barras }}</td>
                             <td>
                                 <a href="{{ url_for('view_produto', id=estoque.produto.id) }}" class="btn btn-info btn-sm me-2">Ver Detalhes</a>
-                                <a href="{{ url_for('edit_produto', id=estoque.produto.id) }}" class="btn btn-warning btn-sm me-2">Editar</a>
-                                <a href="{{ url_for('delete_produto', id=estoque.produto.id) }}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza?')">Excluir</a>
+                                <a href="{{ url_for('add_quantidade', id=estoque.produto.id) }}" class="btn btn-primary btn-sm me-2">Adicionar Quantidade</a>
                             </td>
                         </tr>
                     {% endfor %}

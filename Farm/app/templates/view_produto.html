@@ -19,9 +19,9 @@
                 <li class="list-group-item"><strong>Tipo:</strong> {{ produto.tipo }}</li>
                 <li class="list-group-item"><strong>Numeração do Original:</strong> {{ produto.numeracao_original if produto.numeracao_original else 'Não aplicável' }}</li>
                 <li class="list-group-item"><strong>Grupo:</strong> {{ produto.grupo }}</li>
-                <li class="list-group-item"><strong>ID do Fabricante:</strong> {{ produto.fabricante_id }}</li>
-                <li class="list-group-item"><strong>Quantidade por Embalagem:</strong> {{ produto.quantidade_embalagem }}</li>
-                <li class="list-group-item"><strong>Quantidade no Estoque:</strong> {{ produto.quantidade }}</li>
+                <li class="list-group-item"><strong>ID Fab.:</strong> {{ produto.fabricante_id }}</li>
+                <li class="list-group-item"><strong>Quant. por Caixa:</strong> {{ produto.quantidade_embalagem }}</li>
+                <li class="list-group-item"><strong>Quant. no estoque:</strong> {{ validades|sum(attribute='quantidade') }}</li>
                 <li class="list-group-item"><strong>ID do Fornecedor:</strong> {{ produto.fornecedor_id }}</li>
                 <li class="list-group-item"><strong>Preço de Compra:</strong> R${{ "%.2f"|format(produto.preco_compra) }}</li>
                 <li class="list-group-item"><strong>Preço de Venda:</strong> R${{ "%.2f"|format(produto.preco_venda) }}</li>
@@ -30,7 +30,28 @@
         </div>
     </div>
     <div class="mt-4">
+        <h5>Validades Disponíveis</h5>
+        <div class="row">
+            {% for validade in validades %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Data de Validade:</strong> {{ validade.data_validade.strftime('%d-%m-%Y') }}</li>
+                                <li class="list-group-item"><strong>Quantidade:</strong> {{ validade.quantidade }}</li>
+                            </ul>
+                            <div class="mt-2">
+                                <a href="{{ url_for('edit_validade', id=validade.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="mt-4">
         <a href="{{ url_for('stock') }}" class="btn btn-secondary me-2">Voltar</a>
-        <a href="{{ url_for('edit_produto', id=produto.id) }}" class="btn btn-warning">Editar</a>
+        <a href="{{ url_for('edit_produto', id=produto.id) }}" class="btn btn-warning me-2">Editar</a>
+        <a href="{{ url_for('delete_produto', id=produto.id) }}" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja excluir este produto?')">Excluir</a>
     </div>
 {% endblock %}

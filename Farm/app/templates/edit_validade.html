@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1 class="text-center mb-4">Editar Validade - {{ current_user.farmacia.nome if current_user.farmacia else 'Sem Farmácia' }}</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Editar Validade do Produto: {{ produto.nome }}</h5>
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.quantidade.label(class="form-label") }}
+                    {{ form.quantidade(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.data_validade.label(class="form-label") }}
+                    {{ form.data_validade(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.submit(class="btn btn-primary") }}
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="mt-4">
+        <a href="{{ url_for('view_produto', id=produto.id) }}" class="btn btn-secondary">Voltar</a>
+    </div>
+{% endblock %}
